@@ -4,9 +4,11 @@ import {
   createColumnHelper,
   getCoreRowModel,
   flexRender,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 import { data } from "./data.ts";
 import "./index.css";
+import { EditableCell } from "./components/EditableCell.tsx";
 
 type dataType = {
   id: number;
@@ -35,7 +37,7 @@ const columns = [
   }),
   columnHelper.accessor("username", {
     header: "Username",
-    cell: (row) => row.getValue(),
+    cell: EditableCell,
   }),
   columnHelper.accessor("email", {
     header: "Email",
@@ -58,7 +60,30 @@ export default function App() {
     data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    meta: {
+      updateData: (rowIndex: number, columnId: string, value: any) => {
+        setTableData((prev) => {
+          const newData: any = [...prev];
+          newData[rowIndex][columnId as keyof dataType] = value;
+          return newData;
+        });
+      },
+    },
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 14,
+      },
+    },
   });
+
+  const currentPage = table.getState().pagination.pageIndex;
+  const pageSize = table.getState().pagination.pageSize;
+  const totalRows = tableData.length;
+
+  const startRow = currentPage * pageSize + 1;
+  const endRow = Math.min((currentPage + 1) * pageSize, totalRows);
+
   console.log(table.getHeaderGroups());
 
   return (
@@ -84,7 +109,7 @@ export default function App() {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext,
+                          header.getContext(),
                         )}
                   </th>
                 ))}
@@ -113,6 +138,27 @@ export default function App() {
             ))}
           </tbody>
         </table>
+        <div className="flex gap-4 items-center mt-4">
+          {table.getCanPreviousPage() && (
+            <button
+              onClick={() => table.previousPage()}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-32"
+            >
+              Previous
+            </button>
+          )}
+          <div className="text-sm text-gray-700">
+            Showing {startRow}-{endRow} of {totalRows} cells
+          </div>
+          {table.getCanNextPage() && (
+            <button
+              onClick={() => table.nextPage()}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-32"
+            >
+              Next
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
