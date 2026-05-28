@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@layer base {
+  html,
+  body {
+    @apply min-h-screen overflow-y-scroll bg-slate-950;
+  }
+  div {
+    @apply text-lg text-white;
+  }
+}
