@@ -15,7 +15,7 @@ export const EditableCell = ({ getValue, column, row, table }: any) => {
     <input
       value={value}
       onChange={(e) => setValue(e.target.value)}
-      className="w-[300px] text-left"
+      className="w-[200px] text-left"
       onBlur={onBlur}
     />
   );

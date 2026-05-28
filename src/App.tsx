@@ -9,6 +9,7 @@ import {
 import { data } from "./data.ts";
 import "./index.css";
 import { EditableCell } from "./components/EditableCell.tsx";
+import { ActionButton } from "./components/ActionButton.tsx";
 
 type dataType = {
   id: number;
@@ -50,6 +51,10 @@ const columns = [
   columnHelper.accessor("linkedin_skills", {
     header: "LinkedIn Skills",
     cell: (row) => row.getValue(),
+  }),
+  columnHelper.display({
+    header: "Actions",
+    cell: ActionButton,
   }),
 ];
 
